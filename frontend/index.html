@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-commerce Store</title>
+  <link id="favicon" rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Jost:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
+  
+  <style>
+    :root {
+      --header-height: 170px; /* Define header height for dashboard layouts (32px top + 88px middle + 50px nav) */
+      --theme-color-primary: #4A90E2;
+      --theme-color-gold: #D4AF37;
+      --theme-color-cta-blue: #1F3FBA;
+    }
+    body {
+      font-family: 'Poppins', sans-serif; 
+      overscroll-behavior-y: none; 
+      scroll-behavior: smooth;
+    }
+    html.dark body {
+        /* Dark mode body background is set via Tailwind class on body */
+        color: #F0F4F8; 
+    }
+
+    /* Typography defaults */
+    h1, h2, h3, .font-heading-display { font-family: 'Playfair Display', serif; }
+    .font-heading-cinzel { font-family: 'Cinzel', serif; }
+    .font-heading-cormorant { font-family: 'Cormorant Garamond', serif; }
+    .font-inter { font-family: 'Inter', sans-serif; } 
+    /* Default body font is Poppins via tailwind.config and body style */
+
+    .swiper-button-next, .swiper-button-prev {
+      color: var(--theme-color-primary) !important; /* zaina-primary */
+      background-color: rgba(248, 249, 250, 0.7); /* zaina-white with opacity */
+      border-radius: 50%;
+      width: 36px !important; 
+      height: 36px !important;
+      transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+      opacity: 0.7; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    html.dark .swiper-button-next, html.dark .swiper-button-prev {
+        background-color: rgba(42, 75, 109, 0.7); /* dark-zaina-sky-blue-light with opacity */
+        color: #F8F9FA !important; /* zaina-white */
+    }
+
+    .swiper-button-next:hover, .swiper-button-prev:hover {
+        background-color: rgba(212, 175, 55, 0.9); /* zaina-gold with opacity */
+        color: #FFFFFF !important; 
+        opacity: 1;
+        transform: scale(1.05);
+    }
+     html.dark .swiper-button-next:hover, html.dark .swiper-button-prev:hover {
+        background-color: var(--theme-color-gold); /* zaina-gold */
+        color: #182533 !important; /* dark-zaina-neutral-light (main dark bg) */
+    }
+
+    .swiper-button-next::after, .swiper-button-prev::after {
+      font-size: 0.8rem !important; 
+      font-weight: 600;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #DAE7F3; /* zaina-sky-blue-light */ }
+    ::-webkit-scrollbar-thumb { background: var(--theme-color-primary); /* zaina-primary */ border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--theme-color-gold); /* zaina-gold */ }
+
+    html.dark ::-webkit-scrollbar-track { background: #2C3E50; /* zaina-text-primary (Deep Slate Blue) */ }
+    html.dark ::-webkit-scrollbar-thumb { background: var(--theme-color-gold); /* zaina-gold */ }
+    html.dark ::-webkit-scrollbar-thumb:hover { background: #63B3ED; /* lighter blue for dark primary */ }
+    
+    /* Swiper Scrollbar styles for mouse scroll */
+    .swiper-scrollbar {
+        background: rgba(0, 0, 0, 0.05);
+        height: 4px !important;
+        border-radius: 2px;
+        bottom: 2px !important;
+        left: 5% !important;
+        width: 90% !important;
+    }
+    html.dark .swiper-scrollbar {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .swiper-scrollbar-drag {
+        background: var(--theme-color-primary) !important;
+        border-radius: 2px;
+    }
+    html.dark .swiper-scrollbar-drag {
+        background: var(--theme-color-gold) !important;
+    }
+
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px); 
+      transition: opacity 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+      transition-delay: 0.15s; 
+    }
+    .animate-on-scroll.animation-triggered {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .animate-on-scroll.fade-only { transform: translateY(0); }
+    .animate-on-scroll.fade-only.animation-triggered { transform: translateY(0); }
+
+    .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+    .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .line-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+    
+    .product-card-hover-cursor { cursor: crosshair; }
+
+    .nav-link-underline::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; 
+      left: 0;
+      width: 0;
+      height: 1.5px; 
+      background-color: var(--theme-color-gold); /* zaina-gold */
+      transition: width 0.3s ease-out;
+    }
+    .nav-link-underline:hover::after,
+    .nav-link-underline:focus::after {
+      width: 100%;
+    }
+    html.dark .nav-link-underline::after {
+      background-color: var(--theme-color-gold); /* zaina-gold */
+    }
+
+
+    .header-search-input {
+      background-color: rgba(221, 234, 246, 0.3); /* zaina-sky-blue-light with opacity */
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    .header-search-input:focus {
+      background-color: rgba(221, 234, 246, 0.6); /* zaina-sky-blue-light with opacity */
+      box-shadow: 0 0 0 2px var(--theme-color-primary); /* zaina-primary */
+    }
+    html.dark .header-search-input {
+        background-color: rgba(42, 75, 109, 0.3); /* dark-zaina-sky-blue-light with opacity */
+        color: #E9ECEF; 
+    }
+    html.dark .header-search-input:focus {
+        background-color: rgba(42, 75, 109, 0.6);
+        box-shadow: 0 0 0 2px #63B3ED; /* lighter blue for dark primary */
+    }
+
+    .dashboard-table th, .dashboard-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #E9ECEF; /* zaina-neutral-medium */
+    }
+    html.dark .dashboard-table th, html.dark .dashboard-table td {
+        border-bottom: 1px solid var(--theme-color-primary); /* zaina-primary for dark borders */
+    }
+    .dashboard-table th {
+      background-color: #F8F9FA; /* zaina-neutral-light */
+      font-weight: 600;
+      text-align: left;
+    }
+    html.dark .dashboard-table th {
+        background-color: #2C3E50; /* zaina-text-primary (Deep Slate Blue) */
+    }
+    .dashboard-table tbody tr:hover {
+      background-color: #DAE7F3; /* zaina-sky-blue-light */
+    }
+    html.dark .dashboard-table tbody tr:hover {
+        background-color: #2A4B6D; /* dark-zaina-sky-blue-light */
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.95);
+      opacity: 0;
+      animation: zoomIn 0.3s 0.1s forwards;
+    }
+    html.dark .modal-content {
+      background-color: #2C3E50; /* dark-zaina-bg-card */
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Button Click Animation */
+    .btn-animated {
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    }
+    .btn-animated:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Responsive page content padding */
+    .page-content {
+      padding-top: 100px; /* Mobile header height: ~32px top strip + 68px nav */
+    }
+    .page-content.is-home {
+      padding-top: 0;
+    }
+    @media (min-width: 1024px) { /* Tailwind 'lg' breakpoint */
+        .page-content {
+          padding-top: var(--header-height); /* Desktop header height: ~32px top strip + 88px middle + 50px nav */
+        }
+        .page-content.is-home {
+          padding-top: 0;
+        }
+    }
+    /* Utility to hide scrollbar for horizontal scrolling elements */
+    .custom-scrollbar-hide::-webkit-scrollbar { display: none; }
+    .custom-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Search Animation */
+    @keyframes text-slide-up {
+        0% { transform: translateY(100%); opacity: 0; }
+        15%, 85% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-100%); opacity: 0; }
+    }
+    .animate-text-slide-up {
+        animation: text-slide-up 3s ease-in-out forwards;
+    }
+  </style>
+<script>
+  tailwind.config = {
+    darkMode: 'class', 
+    theme: {
+      extend: {
+        borderRadius: {
+            '2xl': '1rem', // 16px
+        },
+        colors: {
+          // --- NEW ADMIN PALETTE ---
+          'admin-bg': '#F8F9FE',
+          'admin-sidebar': '#FFFFFF',
+          'admin-card': '#FFFFFF',
+          'admin-text-primary': '#1F2937',
+          'admin-text-secondary': '#6B7280',
+          'admin-accent': '#8A5CF5',
+          'admin-accent-light': '#F5F3FF',
+          'admin-border': '#E5E7EB',
+          'admin-green': '#10B981',
+          'admin-red': '#EF4444',
+
+          // Custom Footer Colors
+          'zaina-footer-bg': '#2C3E50',
+          'dark-zaina-footer-bg': '#182533',
+          'zaina-cool-white-text': '#F0F4F8',
+          'dark-zaina-cool-white-text': '#F0F4F8',
+          'zaina-footer-link-hover': 'var(--theme-color-gold, #D4AF37)',
+          'dark-zaina-footer-link-hover': 'var(--theme-color-gold, #D4AF37)',
+          'zaina-slate-gray-text': '#A0AEC0',
+          'dark-zaina-slate-gray-text': '#A0AEC0',
+          'zaina-input-bg-footer': '#34495E',
+          'dark-zaina-input-bg-footer': '#2C3E50',
+
+          // Existing Elegant Palette - NOW USING CSS VARIABLES
+          'zaina-primary': 'var(--theme-color-primary, #4A90E2)',         // Powdery Blue (accents, links, secondary buttons)
+          'zaina-gold': 'var(--theme-color-gold, #D4AF37)',            // Gold (Primary CTAs, prices, highlights)
+          'zaina-sky-blue-light': '#DAE7F3',  // Soft Pastel Blue (main light backgrounds)
+          'zaina-cta-blue': 'var(--theme-color-cta-blue, #1F3FBA)',        // New CTA Blue for specific buttons
+          
+          'zaina-white': '#FFFFFF',
+          'zaina-neutral-light': '#F8F9FA',   // Off White / Cool White (cards, alternative light backgrounds)
+          'zaina-neutral-medium': '#E9ECEF',  // Light Cool Gray (borders, disabled states, subtle UI elements)
+          
+          'zaina-text-primary': '#2C3E50',    // Deep Slate Blue (main text)
+          'zaina-text-secondary': '#7F8C9A',  // Softer Slate Gray for secondary text (was #BDC3C7, making it a bit darker for better readability)
+          'zaina-slate-gray': '#7F8C9A',      // Alias for new zaina-text-secondary
+
+          // Retain specific utility colors if necessary, or map them
+          'zaina-deep-red-accent': '#B42B2B', // For errors or critical alerts
+          'zaina-alert-orange': '#F39C12', // For low stock warnings
+          
+          // Dark Mode Specific Colors
+          'dark': {
+            'zaina-primary': '#63B3ED',          // Lighter Blue for dark mode accents/links
+            'zaina-gold': 'var(--theme-color-gold, #D4AF37)',            // Gold remains gold
+            'zaina-sky-blue-light': '#2A4B6D',  // Darker Pastel Blue for some dark backgrounds/accents
+            'zaina-cta-blue': '#3B65CE',        // Darker variant of CTA Blue
+            
+            'zaina-neutral-light': '#182533',    // Main dark bg (Deep Navy/Charcoal)
+            'zaina-bg-card': '#2C3E50',          // Card backgrounds (Deep Slate Blue)
+            'zaina-neutral-medium': '#34495E',   // Darker Gray for borders/UI elements in dark
+            
+            'zaina-text-primary': '#F0F4F8',     // Main text in dark (Light Gray/Off-White)
+            'zaina-text-secondary': '#A0AEC0',   // Lighter slate gray for dark mode secondary text
+            'zaina-alert-orange': '#E67E22',      // Dark mode alert orange
+
+            // --- NEW DARK ADMIN COLORS ---
+            'admin-bg': '#111827',
+            'admin-sidebar': '#1F2937',
+            'admin-card': '#1F2937',
+            'admin-text-primary': '#F9FAFB',
+            'admin-text-secondary': '#9CA3AF',
+            'admin-accent-light': '#3730A3', 
+            'admin-border': '#374151',
+          }
+        },
+        fontFamily: {
+          'sans': ['Poppins', 'sans-serif'], // Default sans-serif
+          'heading-display': ['Playfair Display', 'serif'], // For main page titles
+          'heading-cinzel': ['Cinzel', 'serif'],       // For very large, impactful titles (e.g., Hero)
+          'heading-cormorant': ['Cormorant Garamond', 'serif'], // For other headings, card titles
+          'body-inter': ['Inter', 'sans-serif'], 
+          'body-jost': ['Poppins', 'sans-serif'], 
+          'body-work-sans': ['Poppins', 'sans-serif'],
+        },
+        boxShadow: {
+          'top-strong': '0 -3px 12px rgba(42, 75, 109, 0.08)', // dark-zaina-sky-blue-light with opacity
+          'dark-top-strong': '0 -3px 12px rgba(212, 175, 55, 0.08)', // zaina-gold with opacity
+          'floating-bar': '0 -2px 10px rgba(224, 224, 224, 0.2)', // For floating add to cart bar (using #E0E0E0 at 20%)
+          'dark-floating-bar': '0 -2px 10px rgba(0, 0, 0, 0.25)', // Darker shadow for dark mode
+          'admin-soft': '0 4px 12px rgba(0, 0, 0, 0.05)',
+          'dark-admin-soft': '0 4px 12px rgba(0, 0, 0, 0.1)',
+        }
+      }
+    }
+  }
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "swiper/": "https://esm.sh/swiper@^11.2.10/",
+    "jspdf": "https://esm.sh/jspdf@2.5.1",
+    "jspdf-autotable": "https://esm.sh/jspdf-autotable@3.8.2",
+    "jsbarcode": "https://esm.sh/jsbarcode@3.11.5",
+    "axios": "https://esm.sh/axios@^1.11.0",
+    "express": "https://esm.sh/express@^5.1.0",
+    "dotenv": "https://esm.sh/dotenv@^17.2.1",
+    "cors": "https://esm.sh/cors@^2.8.5",
+    "@prisma/client": "https://esm.sh/@prisma/client@^6.14.0",
+    "jsonwebtoken": "https://esm.sh/jsonwebtoken@^9.0.2",
+    "bcryptjs": "https://esm.sh/bcryptjs@^3.0.2",
+    "multer": "https://esm.sh/multer@^2.0.2",
+    "@google-cloud/storage": "https://esm.sh/@google-cloud/storage@^7.16.0",
+    "nodemailer": "https://esm.sh/nodemailer@^7.0.5",
+    "razorpay": "https://esm.sh/razorpay@^2.9.6",
+    "cloudinary": "https://esm.sh/cloudinary@^2.7.0",
+    "crypto": "https://aistudiocdn.com/crypto@^1.0.1",
+    "vite": "https://aistudiocdn.com/vite@^7.1.4",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-zaina-sky-blue-light dark:bg-dark-zaina-neutral-light antialiased font-sans text-zaina-text-primary dark:text-dark-zaina-text-primary"> 
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

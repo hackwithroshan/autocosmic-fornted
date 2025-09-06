@@ -1,0 +1,6 @@
+{
+  "name": "E-commerce Homepage",
+  "description": "A stylish, dynamic e-commerce homepage. Features include a hero slider, new arrivals, best sellers, fashion gallery, and Instagram preview. The store name and logo are dynamically loaded from settings.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
